@@ -1,0 +1,1 @@
+import{a as m,_ as n,R as p,c as i,P as e}from"./index-3xXZTIHL.js";const s=m.forwardRef((a,r)=>{var{children:t,as:l="h5",className:c}=a,o=n(a,["children","as","className"]);return p.createElement(l,Object.assign({className:i("modal-title",c)},o,{ref:r}),t)});s.propTypes={as:e.elementType,children:e.node,className:e.string};s.displayName="CModalTitle";export{s as C};
