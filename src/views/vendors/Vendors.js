@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  CCard,
-  CCardBody,
-  CCol,
-  CRow,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -51,7 +47,6 @@ const Vendors = () => {
 
       if (response?.data?.status === 1) {
         let fetchedVendors = response.data.data.businesses || [];
-        // Filter by status client-side
         if (statusFilter !== "All") {
           const isActive = statusFilter === "Active";
           fetchedVendors = fetchedVendors.filter(vendor => vendor.isActive === isActive);

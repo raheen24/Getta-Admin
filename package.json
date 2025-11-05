@@ -26,6 +26,8 @@
     "@coreui/react": "^5.7.1",
     "@coreui/react-chartjs": "^3.0.0",
     "@coreui/utils": "^2.0.2",
+    "@fortawesome/free-solid-svg-icons": "^7.1.0",
+    "@fortawesome/react-fontawesome": "^3.1.0",
     "@popperjs/core": "^2.11.8",
     "@reduxjs/toolkit": "^2.9.0",
     "axios": "^1.12.2",

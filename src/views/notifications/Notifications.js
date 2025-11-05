@@ -87,7 +87,6 @@ const Notifications = () => {
       .includes(userSearchTerm.toLowerCase())
   );
 
-  // Agar search term khali hai to sirf top 10 show karo
   const displayedUsers =
     userSearchTerm.trim() === "" ? filteredUsers.slice(0, 10) : filteredUsers;
 
@@ -183,12 +182,6 @@ const Notifications = () => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
-
-  // const filteredUsers = users.filter((user) =>
-  //   `${user.firstName || ""} ${user.lastName || ""}`
-  //     .toLowerCase()
-  //     .includes(userSearchTerm.toLowerCase())
-  // );
 
   const toggleUserSelection = (userId) => {
     setCreateFormData((prev) => ({

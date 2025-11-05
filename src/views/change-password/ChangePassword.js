@@ -29,8 +29,8 @@ const ChangePassword = () => {
 
     try {
       const { response, error } = await apiHelper(
-        'PUT',
-        '/admin/auth/change-password',
+        'PATCH',
+        '/admin/change-password',
         {},
         requestBody,
       )

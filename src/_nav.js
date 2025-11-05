@@ -9,6 +9,7 @@ import {
   cilGroup,
   cilMoney,
   cilTruck,
+  cilChatBubble,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 
@@ -59,14 +60,14 @@ const _nav = [
     component: CNavItem,
     name: "Disputes",
     to: "/disputes",
-    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilChatBubble} customClassName="nav-icon" />,
   },
-  {
-    component: CNavItem,
-    name: "Reports",
-    to: "/reports",
-    icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
-  },
+  // {
+  //   component: CNavItem,
+  //   name: "Reports",
+  //   to: "/reports",
+  //   icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
+  // },
   {
     component: CNavItem,
     name: "Settings",

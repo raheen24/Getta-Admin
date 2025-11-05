@@ -7,8 +7,6 @@ import {
   CCol,
   CRow,
   CButton,
-  CListGroup,
-  CListGroupItem,
   CSpinner,
   CTable,
   CTableBody,
@@ -28,7 +26,6 @@ import {
   cilEnvelopeClosed,
   cilPhone,
   cilCalendar,
-  cilClock,
   cilArrowLeft,
   cilLocationPin,
   cilBriefcase,
@@ -38,7 +35,7 @@ import {
   cilSearch,
   cilCarAlt,
 } from "@coreui/icons";
-import { cilFindInPage, cilCloudDownload } from "@coreui/icons";
+import { cilCloudDownload } from "@coreui/icons";
 import chat4 from "src/assets/images/chat4.png";
 
 import { apiHelper } from "src/services";
@@ -615,19 +612,16 @@ const UserProfile = () => {
                   const pages = [];
 
                   if (totalPages <= 7) {
-                    // Show all pages if total is 7 or less
                     for (let i = 1; i <= totalPages; i++) {
                       pages.push(i);
                     }
                   } else {
-                    // Show first page
                     pages.push(1);
 
                     if (currentPage > 4) {
                       pages.push("...");
                     }
 
-                    // Show pages around current page
                     const start = Math.max(2, currentPage - 1);
                     const end = Math.min(totalPages - 1, currentPage + 1);
 
@@ -639,7 +633,6 @@ const UserProfile = () => {
                       pages.push("...");
                     }
 
-                    // Show last page
                     if (totalPages > 1) {
                       pages.push(totalPages);
                     }

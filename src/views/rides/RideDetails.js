@@ -16,12 +16,8 @@ import CIcon from "@coreui/icons-react";
 import {
   cilArrowLeft,
   cilUser,
-  cilPhone,
-  cilEnvelopeClosed,
-  cilCalendar,
   cilLocationPin,
   cilClock,
-  cilDollar,
 } from "@coreui/icons";
 
 const RideDetails = () => {

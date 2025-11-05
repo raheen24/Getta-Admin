@@ -42,7 +42,7 @@ body {
 .sidebar-header {
   min-height: calc(
     4rem + 1px
-  ); // stylelint-disable-line function-disallowed-list
+  ); 
 }
 
 .sidebar-brand-full {
@@ -60,7 +60,7 @@ body {
     align-items: center;
     min-height: calc(
       4rem + 1px
-    ); // stylelint-disable-line function-disallowed-list
+    ); 
   }
 }
 
@@ -107,29 +107,37 @@ img {
   right: 12px;
   top: 12px;
 }
+.header-nav .nav-link {
+  box-shadow: 0px 0px 6px 0px #08252b57;
+  border-radius: 32px;
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #08252b;
+  padding: 0 !important;
+  background: #e8f2ec;
+}
 .sidebar-nav .nav-link.active .nav-icon {
-  color: #0e272a !important;
+  color: #0e2728 !important;
 }
 .sidebar-nav .nav-link {
   color: #fff;
 }
 .sidebar-nav .nav-link.active {
-  color: #0e272a;
-  background: #fff;
+  color: #0e2728;
+  background: #ffff;
 }
 .sidebar-nav .nav-link:hover .nav-icon {
-  color: #0e272a !important;
+  color: #0e2728 !important;
 }
 .sidebar-nav .nav-link:hover {
-  color: #0e272a;
-  background: #fff;
+  color: #0e2728;
+  background: #ffff;
 }
-// .loginPage {
-//   background-image: url("../assets/images/bg.png");
-//   background: linear-gradient(80deg, #2bc1f5b0, #1586dcf2);
-// }
 .loginPage {
-  min-height: 100vh; /* full screen height */
+  min-height: 100vh;
   background-color: #eaf3ff !important;
   background-image: url("../assets/images/bg.png");
   background-size: cover;
@@ -182,10 +190,6 @@ img {
   border: 1px solid #0e272a;
   color: #0e272a;
 }
-// .sidebar-narrow-unfoldable img {
-//   width: 50px;
-//   height: 50px;
-// }
 .form-control:focus {
   border-color: rgba(2, 60, 38, 0.269);
   box-shadow: 0 0 0 0.25rem rgba(2, 60, 38, 0.269);
@@ -220,10 +224,6 @@ img {
   color: #fff;
   font-weight: 700;
   border-radius: 0px 8px 8px 8px;
-}
-.accordion-button:not(.collapsed) {
-  color: #0e272a;
-  background-color: #0e272a1f;
 }
 .myTabs {
   border: none;
@@ -393,6 +393,10 @@ td {
   background: #008d4c1c;
   border: none;
   border-radius: 12px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .modal .btn-cta {
   height: 40px;
@@ -464,32 +468,6 @@ td {
 .icon-action:hover {
   color: #0056b3;
 }
-
-.download-link {
-  color: #28a745;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.download-link:hover {
-  text-decoration: underline;
-}
-
-:root {
-  --brand-maroon: #b71c1c;
-  --brand-maroon-dark: #981616;
-  --card-border: #e9e9e9;
-}
-.icon-action {
-  color: #007bff;
-  font-size: 18px;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.icon-action:hover {
-  color: #0056b3;
-}
 .passwordWrapper .form-label {
   font-size: 18px;
   font-family: "Poppins-Medium";
@@ -517,9 +495,7 @@ td {
   border-radius: 12px;
   text-align: center;
 }
-.documentDetailsPage .nav-item {
-  width: fit-content;
-}
+
 .aboutUs h1 {
   font-size: 25px;
   font-family: "Poppins-Medium";

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import {
   CCard,
   CCardBody,
-  CCardHeader,
   CCol,
   CRow,
   CTable,
@@ -18,12 +17,14 @@ import {
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import {
-  cilUser,
+  cilChatBubble,
   cilUserFollow,
-  cilCalendar,
-  cilChartLine,
+  cilGroup,
   cilCheck,
   cilX,
+  cilDollar,
+  cilTruck,
+  cilMoney,
 } from "@coreui/icons";
 import { apiHelper } from "../../services";
 import { toast } from "react-toastify";
@@ -32,42 +33,15 @@ import chat4 from "src/assets/images/chat4.png";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState({
-    totalUsers: 1250,
-    activeUsers: 890,
-    totalDrivers: 450,
-    totalRides: 3200,
-    totalTransactions: 1850,
-    totalReviews: 1200,
-    totalDisputes: 85,
-    totalReports: 150,
-    pendingCoinReqs: 15,
-    engagementPercentage: 72,
-    pendingCoinPurchases: [
-      {
-        _id: 1,
-        name: "John Doe",
-        email: "john@example.com",
-        image: null,
-        packageId: { amount: 25.99 },
-        status: "pending",
-      },
-      {
-        _id: 2,
-        name: "Jane Smith",
-        email: "jane@example.com",
-        image: null,
-        packageId: { amount: 49.99 },
-        status: "pending",
-      },
-      {
-        _id: 3,
-        name: "Mike Johnson",
-        email: "mike@example.com",
-        image: null,
-        packageId: { amount: 15.50 },
-        status: "pending",
-      },
-    ],
+    totalUsers: 0,
+    totalDrivers: 0,
+    totalVendors: 0,
+    totalRides: 0,
+    totalReviews: 0,
+    totalDisputes: 0,
+    totalEarnings: 0,
+    totalPendingPayments: 0,
+    driverRequests: [],
   });
   const [loading, setLoading] = useState(false);
   const [approveLoading, setApproveLoading] = useState({});
@@ -78,10 +52,14 @@ const Dashboard = () => {
   }, []);
 
   const fetchDashboard = async () => {
-    // Simulate API call - data is already set in state
-    setTimeout(() => {
-      // Data is already initialized
-    }, 500);
+    setLoading(true);
+    const { error, response } = await apiHelper("GET", "admin/get-dashboard-data");
+    if (error) {
+      toast.error(error);
+    } else {
+      setDashboardData(response.data.data);
+    }
+    setLoading(false);
   };
 
   const stats = dashboardData
@@ -89,7 +67,7 @@ const Dashboard = () => {
         {
           title: "Total Users",
           value: dashboardData.totalUsers?.toString() || "0",
-          icon: cilUser,
+          icon: cilGroup,
           color: "primary",
           change: "",
         },
@@ -101,16 +79,16 @@ const Dashboard = () => {
           change: "",
         },
         {
-          title: "Total Rides",
-          value: dashboardData.totalRides?.toString() || "0",
-          icon: cilCalendar,
+          title: "Total Vendors",
+          value: dashboardData.totalVendors?.toString() || "0",
+          icon: cilUserFollow,
           color: "info",
           change: "",
         },
         {
-          title: "Total Transactions",
-          value: dashboardData.totalTransactions?.toString() || "0",
-          icon: cilChartLine,
+          title: "Total Rides",
+          value: dashboardData.totalRides?.toString() || "0",
+          icon: cilTruck,
           color: "warning",
           change: "",
         },
@@ -124,21 +102,21 @@ const Dashboard = () => {
         {
           title: "Total Disputes",
           value: dashboardData.totalDisputes?.toString() || "0",
-          icon: cilX,
+          icon: cilChatBubble,
           color: "danger",
           change: "",
         },
         {
-          title: "Total Reports",
-          value: dashboardData.totalReports?.toString() || "0",
-          icon: cilChartLine,
-          color: "info",
+          title: "Total Earnings",
+          value: `$${dashboardData.totalEarnings?.toString() || "0"}`,
+          icon: cilDollar,
+          color: "success",
           change: "",
         },
         {
-          title: "Pending Payments",
-          value: dashboardData.pendingCoinReqs?.toString() || "0",
-          icon: cilCalendar,
+          title: "Total Pending Payments",
+          value: dashboardData.totalPendingPayments?.toString() || "0",
+          icon: cilMoney,
           color: "warning",
           change: "",
         },
@@ -158,37 +136,27 @@ const Dashboard = () => {
     }
   };
 
-  const handleRowClick = (purchase) => {
-    navigate(`/coin-purchases/${purchase._id}`, { state: { purchase } });
+  const handleRowClick = (request) => {
+    navigate(`/driver-requests/${request._id}`, { state: { request } });
   };
 
-  const handleApprove = async (purchase) => {
-    const id = purchase._id;
-    setApproveLoading((prev) => ({ ...prev, [id]: true }));
-    // Simulate API call
-    setTimeout(() => {
-      setDashboardData(prev => ({
-        ...prev,
-        pendingCoinPurchases: prev.pendingCoinPurchases.filter(p => p._id !== id)
-      }));
-      toast.success("Purchase approved successfully.");
-      setApproveLoading((prev) => ({ ...prev, [id]: false }));
-    }, 1000);
-  };
+  // const handleApprove = async (request) => {
+  //   const id = request._id;
+  //   setApproveLoading((prev) => ({ ...prev, [id]: true }));
+  //   setTimeout(() => {
+  //     toast.success("Request accepted successfully.");
+  //     setApproveLoading((prev) => ({ ...prev, [id]: false }));
+  //   }, 1000);
+  // };
 
-  const handleReject = async (purchase) => {
-    const id = purchase._id;
-    setRejectLoading((prev) => ({ ...prev, [id]: true }));
-    // Simulate API call
-    setTimeout(() => {
-      setDashboardData(prev => ({
-        ...prev,
-        pendingCoinPurchases: prev.pendingCoinPurchases.filter(p => p._id !== id)
-      }));
-      toast.success("Purchase rejected successfully.");
-      setRejectLoading((prev) => ({ ...prev, [id]: false }));
-    }, 1000);
-  };
+  // const handleReject = async (request) => {
+  //   const id = request._id;
+  //   setRejectLoading((prev) => ({ ...prev, [id]: true }));
+  //   setTimeout(() => {
+  //     toast.success("Request rejected successfully.");
+  //     setRejectLoading((prev) => ({ ...prev, [id]: false }));
+  //   }, 1000);
+  // };
 
   if (loading) {
     return (
@@ -222,44 +190,39 @@ const Dashboard = () => {
         ))}
       </CRow>
 
-      {/* Pending Coin Purchases Table */}
-      <h4 className="heading mb-4">Pending Payments</h4>
+      {/* Driver Requests Table */}
+      <h4 className="heading mb-4">Driver Requests</h4>
 
       <CTable hover responsive className="customTables">
         <CTableHead>
           <CTableRow>
-            <CTableHeaderCell>User</CTableHeaderCell>
-            <CTableHeaderCell>Email</CTableHeaderCell>
-
-            <CTableHeaderCell className="d-none d-md-table-cell">
-              Package
-            </CTableHeaderCell>
+            <CTableHeaderCell>Driver</CTableHeaderCell>
+            <CTableHeaderCell>Vendor</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
-            <CTableHeaderCell>Actions</CTableHeaderCell>
+            {/* <CTableHeaderCell>Actions</CTableHeaderCell> */}
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {dashboardData.pendingCoinPurchases &&
-          dashboardData.pendingCoinPurchases.length > 0 ? (
-            dashboardData.pendingCoinPurchases.map((purchase) => (
+          {dashboardData.driverRequests &&
+          dashboardData.driverRequests.length > 0 ? (
+            dashboardData.driverRequests.map((request) => (
               <CTableRow
-                key={purchase._id}
-                onClick={() => handleRowClick(purchase)}
+                key={request._id}
+                onClick={() => handleRowClick(request)}
                 style={{ cursor: "pointer" }}
               >
-                {/* User Info */}
+                {/* Driver Info */}
                 <CTableDataCell>
                   <div>
-                    <div className="d-flex align-items-center gap-2">
+                    <div className="d-flex align-items-center gap-2 justify-content-center">
                       <img
-                        src={purchase.image || chat4}
-                        alt="User Avatar"
+                        src={request.driverId?.image || chat4}
+                        alt="Driver Avatar"
                         style={{
                           width: "40px",
                           height: "40px",
                           borderRadius: "50%",
                           border: "1px solid #ddd",
-
                           objectFit: "cover",
                           flexShrink: 0,
                         }}
@@ -276,41 +239,36 @@ const Dashboard = () => {
                           flexGrow: 1,
                         }}
                       >
-                        {purchase.name || "N/A"}
+                        {request.driverId?.fullName || "N/A"}
                       </p>
                     </div>
                   </div>
                 </CTableDataCell>
                 <CTableDataCell>
-                  <div>{purchase.email || "N/A"}</div>
-                </CTableDataCell>
-
-                {/* Package Info */}
-                <CTableDataCell>
-                  <div>${purchase.packageId?.amount || "N/A"}</div>
+                  <div>{request.vendorId?.businessName || "N/A"}</div>
                 </CTableDataCell>
 
                 {/* Status */}
                 <CTableDataCell>
-                  {getStatusBadge(purchase.status)}
+                  {getStatusBadge(request.status)}
                 </CTableDataCell>
 
                 {/* Actions */}
-                <CTableDataCell>
+                {/* <CTableDataCell>
                   <div className="d-flex align-items-center gap-2 justify-content-center">
                     <CButton
                       size="sm"
                       className="medium"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleApprove(purchase);
+                        handleApprove(request);
                       }}
-                      disabled={approveLoading[purchase._id]}
+                      disabled={approveLoading[request._id]}
                     >
-                      {approveLoading[purchase._id] ? (
+                      {approveLoading[request._id] ? (
                         <CSpinner size="sm" />
                       ) : (
-                        "Approve"
+                        <CIcon icon={cilCheck} />
                       )}
                     </CButton>
                     <CButton
@@ -318,29 +276,30 @@ const Dashboard = () => {
                       className="high"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleReject(purchase);
+                        handleReject(request);
                       }}
-                      disabled={rejectLoading[purchase._id]}
+                      disabled={rejectLoading[request._id]}
                     >
-                      {rejectLoading[purchase._id] ? (
+                      {rejectLoading[request._id] ? (
                         <CSpinner size="sm" />
                       ) : (
-                        "Reject"
+                        <CIcon icon={cilX} />
                       )}
                     </CButton>
                   </div>
-                </CTableDataCell>
+                </CTableDataCell> */}
               </CTableRow>
             ))
           ) : (
             <CTableRow>
               <CTableDataCell colSpan={4} className="text-center">
-                No pending purchases found
+                No driver requests found
               </CTableDataCell>
             </CTableRow>
           )}
         </CTableBody>
       </CTable>
+
     </>
   );
 };

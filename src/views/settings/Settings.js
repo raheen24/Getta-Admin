@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react";
 import {
-  CCard,
-  CCardBody,
   CCol,
   CRow,
   CNav,
@@ -18,92 +16,99 @@ import {
   CFormTextarea,
   CFormInput,
   CFormLabel,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilPencil, cilSave } from '@coreui/icons'
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilPencil, cilSave } from "@coreui/icons";
 
-import { apiHelper } from '../../services'
-import { toast } from 'react-toastify'
+import { apiHelper } from "../../services";
+import { toast } from "react-toastify";
 
 const Settings = () => {
-  const [activeTab, setActiveTab] = useState('about')
-  const [contentData, setContentData] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [saveLoading, setSaveLoading] = useState(false)
-  const [editModal, setEditModal] = useState(false)
-  const [editingType, setEditingType] = useState('')
-  const [editingContent, setEditingContent] = useState('')
-  const [perMileFare, setPerMileFare] = useState('2.50')
-  const [petCharges, setPetCharges] = useState('10.00')
+  const [activeTab, setActiveTab] = useState("terms");
+  const [contentData, setContentData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [editingType, setEditingType] = useState("");
+  const [editingContent, setEditingContent] = useState("");
+  const [perMileFare, setPerMileFare] = useState("2.50");
+  const [petCharges, setPetCharges] = useState("10.00");
 
   useEffect(() => {
-    fetchContent()
-  }, [])
+    fetchContent();
+  }, []);
 
   const fetchContent = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const { response, error } = await apiHelper('GET', `/admin/moderation/content`)
+      const { response, error } = await apiHelper("GET", `/admin/get-content`);
 
       if (response?.data?.status === 1) {
-        setContentData(response.data.data || [])
+        const data = response.data.data;
+        const transformed = [
+          { type: "terms-and-conditions", content: data.termCondition || "" },
+          { type: "privacy-policy", content: data.privacyPolicy || "" },
+        ];
+        setContentData(transformed);
       } else {
-        toast.error(response?.data?.message || error || 'Failed to fetch content.')
+        toast.error(
+          response?.data?.message || error || "Failed to fetch content."
+        );
       }
     } catch (err) {
-      console.error('Catch Error:', err)
-      toast.error('Something went wrong. Please try again.')
+      console.error("Catch Error:", err);
+      toast.error("Something went wrong. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const getContentByType = (type) => {
-    return contentData.find((item) => item.type === type)
-  }
+    return contentData.find((item) => item.type === type);
+  };
 
   const handleEdit = (type) => {
-    const content = getContentByType(type)
-    setEditingType(type)
-    setEditingContent(content?.content || '')
-    setEditModal(true)
-  }
+    const content = getContentByType(type);
+    setEditingType(type);
+    setEditingContent(content?.content || "");
+    setEditModal(true);
+  };
 
   const handleSave = async () => {
-    setSaveLoading(true)
+    setSaveLoading(true);
     const body = {
       privacyPolicy:
-        editingType === 'privacy-policy'
+        editingType === "privacy-policy"
           ? editingContent
-          : getContentByType('privacy-policy')?.content || '',
+          : getContentByType("privacy-policy")?.content || "",
       termCondition:
-        editingType === 'terms-and-conditions'
+        editingType === "terms-and-conditions"
           ? editingContent
-          : getContentByType('terms-and-conditions')?.content || '',
-    }
+          : getContentByType("terms-and-conditions")?.content || "",
+    };
 
     try {
       const { response, error } = await apiHelper(
-        'POST',
+        "POST",
         `admin/update-content`,
         {},
-        body,
-      )
+        body
+      );
 
       if (response?.data?.status === 1) {
-        toast.success(response.data.message || 'Content updated successfully.')
-        setEditModal(false)
-        fetchContent()
+        toast.success(response.data.message || "Content updated successfully.");
+        setEditModal(false);
+        fetchContent();
       } else {
-        toast.error(response?.data?.message || error || 'Failed to update.')
+        toast.error(response?.data?.message || error || "Failed to update.");
       }
     } catch (err) {
-      console.error('Catch Error:', err)
-      toast.error('Something went wrong. Please try again.')
+      console.error("Catch Error:", err);
+      toast.error("Something went wrong. Please try again.");
     } finally {
-      setSaveLoading(false)
+      setSaveLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -113,41 +118,50 @@ const Settings = () => {
           <CSpinner />
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="settingsPage">
       <h4 className="heading mb-3">Settings</h4>
       <CRow className="mb-3">
-        <CCol lg={4} md={5} xs={12} className='mb-2'>
+        <CCol lg={4} md={5} xs={12} className="mb-2">
           <CNav variant="tabs" className="myTabs">
-            <CNavItem>
+            {/* <CNavItem>
               <CNavLink active={activeTab === 'about'} onClick={() => setActiveTab('about')}>
                 About Us
               </CNavLink>
-            </CNavItem>
+            </CNavItem> */}
             <CNavItem>
-              <CNavLink active={activeTab === 'terms'} onClick={() => setActiveTab('terms')}>
+              <CNavLink
+                active={activeTab === "terms"}
+                onClick={() => setActiveTab("terms")}
+              >
                 Terms & Conditions
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink active={activeTab === 'privacy'} onClick={() => setActiveTab('privacy')}>
+              <CNavLink
+                active={activeTab === "privacy"}
+                onClick={() => setActiveTab("privacy")}
+              >
                 Privacy Policy
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink active={activeTab === 'fares'} onClick={() => setActiveTab('fares')}>
+              <CNavLink
+                active={activeTab === "fares"}
+                onClick={() => setActiveTab("fares")}
+              >
                 Fares & Charges
               </CNavLink>
             </CNavItem>
           </CNav>
         </CCol>
-        <CCol lg={8} md={7} xs={12} className='mb-2'>
+        <CCol lg={8} md={7} xs={12} className="mb-2">
           <CTabContent>
             {/* About Us Tab */}
-            <CTabPane visible={activeTab === 'about'}>
+            {/* <CTabPane visible={activeTab === 'about'}>
               <div className="aboutUs">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <h1>About Us</h1>
@@ -158,48 +172,52 @@ const Settings = () => {
                 </div>
                 <p>{getContentByType('about-us')?.content || 'No content available.'}</p>
               </div>
-            </CTabPane>
+            </CTabPane> */}
 
             {/* Terms Tab */}
-            <CTabPane visible={activeTab === 'terms'}>
+            <CTabPane visible={activeTab === "terms"}>
               <div className="aboutUs">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <h1>Terms & Conditions</h1>
                   <CButton
                     color="cta"
                     className="cta cta2"
-                    onClick={() => handleEdit('terms-and-conditions')}
+                    onClick={() => handleEdit("terms-and-conditions")}
                   >
                     <CIcon icon={cilPencil} className="me-2" />
                     Edit
                   </CButton>
                 </div>
                 <p>
-                  {getContentByType('terms-and-conditions')?.content || 'No content available.'}
+                  {getContentByType("terms-and-conditions")?.content ||
+                    "No content available."}
                 </p>
               </div>
             </CTabPane>
 
             {/* Privacy Tab */}
-            <CTabPane visible={activeTab === 'privacy'}>
+            <CTabPane visible={activeTab === "privacy"}>
               <div className="aboutUs">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <h1>Privacy Policy</h1>
                   <CButton
                     color="cta"
                     className="cta cta2"
-                    onClick={() => handleEdit('privacy-policy')}
+                    onClick={() => handleEdit("privacy-policy")}
                   >
                     <CIcon icon={cilPencil} className="me-2" />
                     Edit
                   </CButton>
                 </div>
-                <p>{getContentByType('privacy-policy')?.content || 'No content available.'}</p>
+                <p>
+                  {getContentByType("privacy-policy")?.content ||
+                    "No content available."}
+                </p>
               </div>
             </CTabPane>
 
             {/* Fares & Charges Tab */}
-            <CTabPane visible={activeTab === 'fares'}>
+            <CTabPane visible={activeTab === "fares"}>
               <div className="faresCharges">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <h1>Fares & Charges</h1>
@@ -211,7 +229,9 @@ const Settings = () => {
                 <CRow>
                   <CCol md={6}>
                     <div className="mb-3">
-                      <CFormLabel htmlFor="perMileFare">Per Mile Fare ($)</CFormLabel>
+                      <CFormLabel htmlFor="perMileFare">
+                        Per Mile Fare ($)
+                      </CFormLabel>
                       <CFormInput
                         id="perMileFare"
                         type="number"
@@ -223,7 +243,9 @@ const Settings = () => {
                   </CCol>
                   <CCol md={6}>
                     <div className="mb-3">
-                      <CFormLabel htmlFor="petCharges">Pet Charges ($)</CFormLabel>
+                      <CFormLabel htmlFor="petCharges">
+                        Pet Charges ($)
+                      </CFormLabel>
                       <CFormInput
                         id="petCharges"
                         type="number"
@@ -244,11 +266,9 @@ const Settings = () => {
       <CModal visible={editModal} onClose={() => setEditModal(false)}>
         <CModalHeader>
           Edit
-          {editingType === 'about-us'
-            ? 'About Us'
-            : editingType === 'terms-and-conditions'
-              ? 'Terms & Conditions'
-              : 'Privacy Policy'}
+          {editingType === "terms-and-conditions"
+            ? "Terms & Conditions"
+            : "Privacy Policy"}
         </CModalHeader>
         <CModalBody>
           <CFormTextarea
@@ -262,13 +282,18 @@ const Settings = () => {
           <CButton color="secondary" onClick={() => setEditModal(false)}>
             Cancel
           </CButton>
-          <CButton color="cta" className="cta cta2" onClick={handleSave} disabled={saveLoading}>
-            {saveLoading ? <CSpinner size="sm" /> : 'Save'}
+          <CButton
+            color="cta"
+            className="cta cta2"
+            onClick={handleSave}
+            disabled={saveLoading}
+          >
+            {saveLoading ? <CSpinner size="sm" /> : "Save"}
           </CButton>
         </CModalFooter>
       </CModal>
     </div>
-  )
-}
+  );
+};
 
-export default Settings
+export default Settings;

@@ -12,14 +12,17 @@ import {
 import {
   cilLockLocked,
   cilAccountLogout,
+  cilUser,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
+import { useSelector } from 'react-redux'
 
 import avatar8 from './../../assets/images/avatars/8.jpg'
 import { useNavigate } from 'react-router-dom'
 
 const AppHeaderDropdown = () => {
   const navigate = useNavigate()
+  const user = useSelector((state) => state.user.user)
 
   const handleLogout = () => {
     navigate('/login')
@@ -30,9 +33,12 @@ const AppHeaderDropdown = () => {
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
-        <CAvatar src={avatar8} size="md" />
+        <CIcon icon={cilUser} size="xl" />
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
+        <CDropdownHeader className="bg-body-secondary fw-semibold my-2">
+          {user?.email || 'User'}
+        </CDropdownHeader>
         <CDropdownItem onClick={handleChangePassword}>
           <CIcon icon={cilLockLocked} className="me-2" />
           Change Password

@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  CCard,
-  CCardBody,
-  CCol,
-  CRow,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -29,7 +25,7 @@ import {
   CSpinner,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilSearch, cilPlus, cilPencil, cilTrash } from "@coreui/icons";
+import { cilSearch, cilPencil, cilTrash } from "@coreui/icons";
 import { apiHelper } from "../../services";
 import { toast } from "react-toastify";
 import chat4 from "src/assets/images/chat4.png";
@@ -83,8 +79,6 @@ const Users = () => {
           const isActive = status === "Active";
           usersData = usersData.filter(user => user.isActive === isActive);
         }
-
-        // Map API response to component expected format
         const mappedUsers = usersData.map(user => ({
           _id: user._id,
           firstName: user.fullName?.split(' ')[0] || '',
@@ -105,7 +99,6 @@ const Users = () => {
         }));
 
         setUsers(mappedUsers);
-        // Assuming API returns pagination info, adjust as needed
         setTotalPages(Math.ceil(mappedUsers.length / 10));
       } else {
         toast.error(response?.data?.message || error || "Failed to fetch users.");
@@ -134,7 +127,7 @@ const Users = () => {
     if (currentPage !== 1 || searchTerm || statusFilter) {
       const delayDebounce = setTimeout(() => {
         fetchUsers(currentPage, searchTerm, statusFilter);
-      }, 500); // debounce for search typing
+      }, 500);
       return () => clearTimeout(delayDebounce);
     }
   }, [currentPage, searchTerm, statusFilter]);
@@ -169,7 +162,6 @@ const Users = () => {
 
     try {
       setDeleteLoading(true);
-      // Simulate API call
       setTimeout(() => {
         setUsers(prevUsers => prevUsers.filter(user => user._id !== selectedUser._id));
         toast.success("User deleted successfully.");

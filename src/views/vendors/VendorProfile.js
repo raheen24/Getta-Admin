@@ -29,28 +29,6 @@ import { useNavigate } from "react-router-dom";
 const VendorProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const handleDownload = async (url, fileName) => {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      let extension = "";
-      if (url.includes(".")) {
-        extension = url.split(".").pop().split(/\#|\?/)[0];
-      } else if (blob.type) {
-        extension = blob.type.split("/")[1];
-      }
-      const finalName = fileName.endsWith(`.${extension}`)
-        ? fileName
-        : `${fileName}.${extension}`;
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = finalName;
-      link.click();
-      URL.revokeObjectURL(link.href);
-    } catch (err) {
-      console.error("Download failed:", err);
-    }
-  };
 
   const convertTo24Hour = (timeStr) => {
     if (!timeStr) return "N/A";
