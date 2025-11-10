@@ -81,3 +81,8 @@ export const apiHelper = async (
     };
   }
 };
+
+export const getTimeLogs = async (query = "") => {
+  const queryString = query ? `?q=${encodeURIComponent(query)}` : "";
+  return await apiHelper("GET", `admin/get-time-logs${queryString}`);
+};

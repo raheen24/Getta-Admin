@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CCard,
   CCardBody,
@@ -24,84 +25,114 @@ import {
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilSearch } from "@coreui/icons";
+import { apiHelper } from "../../services";
+import { toast } from "react-toastify";
 
 const Transactions = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // Dummy data for transactions
-  const dummyTransactions = [
-    {
-      id: 1,
-      transactionId: "TXN001",
-      user: "John Doe",
-      amount: 25.50,
-      type: "Ride Payment",
-      status: "Completed",
-      date: "2023-10-01",
-    },
-    {
-      id: 2,
-      transactionId: "TXN002",
-      user: "Jane Smith",
-      amount: 15.75,
-      type: "Ride Payment",
-      status: "Pending",
-      date: "2023-10-02",
-    },
-    {
-      id: 3,
-      transactionId: "TXN003",
-      user: "Mike Johnson",
-      amount: 30.00,
-      type: "Driver Payout",
-      status: "Completed",
-      date: "2023-10-03",
-    },
-    {
-      id: 4,
-      transactionId: "TXN004",
-      user: "Sarah Wilson",
-      amount: 20.25,
-      type: "Ride Payment",
-      status: "Failed",
-      date: "2023-10-04",
-    },
-    {
-      id: 5,
-      transactionId: "TXN005",
-      user: "Tom Brown",
-      amount: 18.90,
-      type: "Ride Payment",
-      status: "Completed",
-      date: "2023-10-05",
-    },
-  ];
+  const fetchTransactions = async (page = 1, search = "", status = "") => {
+    setLoading(true);
+    try {
+      const queryParams = new URLSearchParams();
+      if (search) {
+        queryParams.append('q', search);
+      }
+      if (page > 1) {
+        queryParams.append('page', page);
+      }
+
+      const endpoint = `admin/get-income${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+
+      const { response, error } = await apiHelper(
+        "GET",
+        endpoint,
+        {},
+        null
+      );
+
+      if (response?.data?.status === 1) {
+        const vendorsData = response.data.data.vendors || [];
+        const allPayments = [];
+
+        vendorsData.forEach(vendor => {
+          vendor.payments.forEach(payment => {
+            allPayments.push({
+              ...payment,
+              vendor: vendor.vendor,
+              driver: payment.driver,
+              vendorId: vendor._id,
+              totalIncome: vendor.totalIncome,
+            });
+          });
+        });
+
+        // Filter by status if provided
+        let filteredPayments = allPayments;
+        if (status) {
+          filteredPayments = allPayments.filter(payment => payment.status === status.toLowerCase());
+        }
+
+        setTransactions(filteredPayments);
+        setTotalPages(Math.ceil(filteredPayments.length / 10));
+      } else {
+        toast.error(response?.data?.message || error || "Failed to fetch transactions.");
+        setTransactions([]);
+        setTotalPages(1);
+      }
+    } catch (err) {
+      console.error("Fetch transactions error:", err);
+      toast.error("Something went wrong. Please try again.");
+      setTransactions([]);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case "Completed":
+      case "completed":
         return <CBadge className="medium">Completed</CBadge>;
-      case "Pending":
+      case "pending":
         return <CBadge className="pending">Pending</CBadge>;
-      case "Failed":
+      case "failed":
         return <CBadge className="high">Failed</CBadge>;
+      case "cancelled":
+        return <CBadge className="high">Cancelled</CBadge>;
       default:
         return <CBadge>{status}</CBadge>;
     }
   };
 
-  const filteredTransactions = dummyTransactions.filter((transaction) => {
+  useEffect(() => {
+    fetchTransactions(1, "", "");
+  }, []);
+
+  useEffect(() => {
+    if (currentPage !== 1 || searchTerm || statusFilter) {
+      const delayDebounce = setTimeout(() => {
+        fetchTransactions(currentPage, searchTerm, statusFilter);
+      }, 500);
+      return () => clearTimeout(delayDebounce);
+    }
+  }, [currentPage, searchTerm, statusFilter]);
+
+  const filteredTransactions = transactions.filter((transaction) => {
     const matchesSearch =
-      transaction.transactionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.user.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "" || transaction.status === statusFilter;
+      transaction._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.vendor.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.driver.fullName?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "" || transaction.status === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   });
 
-  const totalPages = Math.ceil(filteredTransactions.length / 10);
   const paginatedTransactions = filteredTransactions.slice(
     (currentPage - 1) * 10,
     currentPage * 10
@@ -110,7 +141,7 @@ const Transactions = () => {
   return (
     <div className="transactionsPage">
       <h4 className="heading mb-3">Transactions Management</h4>
-      <div className="d-flex gap-2 align-items-center mb-3 flex-wrap">
+      {/* <div className="d-flex gap-2 align-items-center mb-3 flex-wrap">
         <CInputGroup className="searchfield">
           <CFormInput
             placeholder="Search transactions..."
@@ -138,17 +169,21 @@ const Transactions = () => {
             <CDropdownItem onClick={() => setStatusFilter("Failed")}>
               Failed
             </CDropdownItem>
+            <CDropdownItem onClick={() => setStatusFilter("Cancelled")}>
+              Cancelled
+            </CDropdownItem>
           </CDropdownMenu>
         </CDropdown>
-      </div>
+      </div> */}
 
       <CTable hover responsive className="customTables">
         <CTableHead>
           <CTableRow>
             <CTableHeaderCell>Transaction ID</CTableHeaderCell>
-            <CTableHeaderCell>User</CTableHeaderCell>
+            <CTableHeaderCell>Vendor</CTableHeaderCell>
+            <CTableHeaderCell>Driver</CTableHeaderCell>
             <CTableHeaderCell>Amount</CTableHeaderCell>
-            <CTableHeaderCell>Type</CTableHeaderCell>
+            <CTableHeaderCell>Ride Type</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
             <CTableHeaderCell>Date</CTableHeaderCell>
           </CTableRow>
@@ -156,24 +191,35 @@ const Transactions = () => {
         <CTableBody>
           {loading ? (
             <CTableRow>
-              <CTableDataCell colSpan={6} className="text-center">
+              <CTableDataCell colSpan={7} className="text-center">
                 <CSpinner size="sm" />
               </CTableDataCell>
             </CTableRow>
           ) : paginatedTransactions.length > 0 ? (
             paginatedTransactions.map((transaction) => (
-              <CTableRow key={transaction.id}>
-                <CTableDataCell>{transaction.transactionId}</CTableDataCell>
-                <CTableDataCell>{transaction.user}</CTableDataCell>
-                <CTableDataCell>${transaction.amount.toFixed(2)}</CTableDataCell>
-                <CTableDataCell>{transaction.type}</CTableDataCell>
+              <CTableRow
+                key={transaction._id}
+                onClick={() => navigate(`/transactions/${transaction._id}`, {
+                  state: {
+                    payment: transaction,
+                    vendor: transaction.vendor,
+                    driver: transaction.driver
+                  }
+                })}
+                style={{ cursor: "pointer" }}
+              >
+                <CTableDataCell>{transaction._id}</CTableDataCell>
+                <CTableDataCell>{transaction.vendor.businessName || transaction.vendor.fullName}</CTableDataCell>
+                <CTableDataCell>{transaction.driver.fullName}</CTableDataCell>
+                <CTableDataCell>${transaction.amount?.toFixed(2)}</CTableDataCell>
+                <CTableDataCell>{transaction.rideType}</CTableDataCell>
                 <CTableDataCell>{getStatusBadge(transaction.status)}</CTableDataCell>
-                <CTableDataCell>{transaction.date}</CTableDataCell>
+                <CTableDataCell>{new Date(transaction.createdAt).toLocaleDateString()}</CTableDataCell>
               </CTableRow>
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan={6} className="text-center">
+              <CTableDataCell colSpan={7} className="text-center">
                 No transactions found
               </CTableDataCell>
             </CTableRow>

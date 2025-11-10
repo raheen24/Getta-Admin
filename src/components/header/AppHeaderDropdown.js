@@ -15,16 +15,19 @@ import {
   cilUser,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setLogout } from '../../redux/slice/userslice'
 
 import avatar8 from './../../assets/images/avatars/8.jpg'
 import { useNavigate } from 'react-router-dom'
 
 const AppHeaderDropdown = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const user = useSelector((state) => state.user.user)
 
   const handleLogout = () => {
+    dispatch(setLogout())
     navigate('/login')
   }
   const handleChangePassword = () => {

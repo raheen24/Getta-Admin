@@ -10,15 +10,14 @@ const DriverProfile = React.lazy(() => import('./views/drivers/DriverProfile'))
 const Vendors = React.lazy(() => import('./views/vendors/Vendors'))
 const VendorProfile = React.lazy(() => import('./views/vendors/VendorProfile'))
 const Transactions = React.lazy(() => import('./views/transactions/Transactions'))
+const TransactionDetails = React.lazy(() => import('./views/transactions/TransactionDetails'))
 const Rides = React.lazy(() => import('./views/rides/Rides'))
 const RideDetails = React.lazy(() => import('./views/rides/RideDetails'))
 const Reviews = React.lazy(() => import('./views/reviews/Reviews'))
 const ReviewDetails = React.lazy(() => import('./views/reviews/ReviewDetails'))
 const Disputes = React.lazy(() => import('./views/disputes/Disputes'))
-const Reports = React.lazy(() => import('./views/reports/Reports'))
-const ReportDetails = React.lazy(() => import('./views/reports/ReportDetails'))
+const Timelog = React.lazy(() => import('./views/timelog/Timelog'))
 const Settings = React.lazy(() => import('./views/settings/Settings'))
-const ContentManagement = React.lazy(() => import('./views/content-management/ContentManagement'))
 const ChangePassword = React.lazy(() => import('./views/change-password/ChangePassword'))
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -31,15 +30,14 @@ const routes = [
   { path: '/vendors', name: 'Vendors', element: Vendors },
   { path: '/vendors/:id', name: 'Vendor Profile', element: VendorProfile },
   { path: '/transactions', name: 'Transactions', element: Transactions },
+  { path: '/transactions/:id', name: 'Transaction Details', element: TransactionDetails },
   { path: '/rides', name: 'Rides', element: Rides },
   { path: '/rides/:id', name: 'Ride Details', element: RideDetails },
   { path: '/reviews', name: 'Reviews', element: Reviews },
   { path: '/reviews/:id', name: 'Review Details', element: ReviewDetails },
   { path: '/disputes', name: 'Disputes', element: Disputes },
-  { path: '/reports', name: 'Reports', element: Reports },
-  { path: '/reports/:id', name: 'Report Details', element: ReportDetails },
+  { path: '/timelog', name: 'Timelog', element: Timelog },
   { path: '/settings', name: 'Settings', element: Settings },
-  { path: '/content-management', name: 'Content Management', element: ContentManagement },
   {path : '/change-password', name: 'Change Password', element: ChangePassword},  
 
 ]
