@@ -43,7 +43,7 @@ export default defineConfig(() => {
    server: {
      port: 3000,
        host: '0.0.0.0', // expose to network
-       allowedHosts: ['courageous-web.deployment-uat.com'], 
+       allowedHosts: ['getta-web.deployment-uat.com'], 
        proxy: {
          // https://vitejs.dev/config/server-options.html
         },
