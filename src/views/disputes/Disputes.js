@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CCard,
   CCardBody,
@@ -23,97 +24,88 @@ import {
   CButton,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilSearch } from "@coreui/icons";
+import { cilSearch, cilChatBubble } from "@coreui/icons";
+import { getDisputes } from "../../services";
+import { toast } from "react-toastify";
 
 const Disputes = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [disputes, setDisputes] = useState([]);
+  const [pagination, setPagination] = useState({ total: 0, page: 1, limit: 10, pages: 1 });
 
-  // Dummy data for disputes
-  const dummyDisputes = [
-    {
-      id: 1,
-      disputeId: "DSP001",
-      user: "John Doe",
-      driver: "Mike Johnson",
-      issue: "Late arrival",
-      status: "Open",
-      amount: 25.50,
-      date: "2023-10-01",
-    },
-    {
-      id: 2,
-      disputeId: "DSP002",
-      user: "Jane Smith",
-      driver: "Sarah Wilson",
-      issue: "Vehicle condition",
-      status: "Resolved",
-      amount: 15.75,
-      date: "2023-10-02",
-    },
-    {
-      id: 3,
-      disputeId: "DSP003",
-      user: "Tom Brown",
-      driver: "Alex Davis",
-      issue: "Wrong route",
-      status: "Under Review",
-      amount: 30.00,
-      date: "2023-10-03",
-    },
-    {
-      id: 4,
-      disputeId: "DSP004",
-      user: "Lisa Green",
-      driver: "Chris Taylor",
-      issue: "Billing error",
-      status: "Closed",
-      amount: 20.25,
-      date: "2023-10-04",
-    },
-    {
-      id: 5,
-      disputeId: "DSP005",
-      user: "David White",
-      driver: "Emma Brown",
-      issue: "Driver behavior",
-      status: "Open",
-      amount: 18.90,
-      date: "2023-10-05",
-    },
-  ];
+
+  const fetchDisputes = async (page = 1, search = "", status = "") => {
+    setLoading(true);
+    try {
+      const params = { page, limit: 10 };
+      if (search) params.search = search;
+      if (status) params.status = status;
+
+      const { response, error } = await getDisputes(params);
+
+      if (response?.data?.status === 1) {
+        setDisputes(response.data.data.disputes || []);
+        setPagination(response.data.data.pagination || { total: 0, page: 1, limit: 10, pages: 1 });
+        setCurrentPage(page);
+      } else {
+        toast.error(response?.data?.message || error || "Failed to fetch disputes.");
+        setDisputes([]);
+        setPagination({ total: 0, page: 1, limit: 10, pages: 1 });
+      }
+    } catch (err) {
+      console.error("Fetch disputes error:", err);
+      toast.error("Something went wrong. Please try again.");
+      setDisputes([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDisputes(1, "", statusFilter);
+  }, [statusFilter]);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchDisputes(1, searchTerm, statusFilter);
+    }, 500);
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case "Open":
-        return <CBadge className="pending">Open</CBadge>;
-      case "Resolved":
+      case "unsolved":
+        return <CBadge className="pending">Unsolved</CBadge>;
+      case "resolved":
         return <CBadge className="medium">Resolved</CBadge>;
-      case "Under Review":
+      case "under review":
         return <CBadge className="low">Under Review</CBadge>;
-      case "Closed":
+      case "closed":
         return <CBadge className="high">Closed</CBadge>;
       default:
         return <CBadge>{status}</CBadge>;
     }
   };
 
-  const filteredDisputes = dummyDisputes.filter((dispute) => {
-    const matchesSearch =
-      dispute.disputeId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dispute.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dispute.driver.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "" || dispute.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const getStatusDisplay = (status) => {
+    switch (status) {
+      case "unsolved":
+        return "Unsolved";
+      case "resolved":
+        return "Resolved";
+      case "under review":
+        return "Under Review";
+      case "closed":
+        return "Closed";
+      default:
+        return "All";
+    }
+  };
 
-  const totalPages = Math.ceil(filteredDisputes.length / 10);
-  const paginatedDisputes = filteredDisputes.slice(
-    (currentPage - 1) * 10,
-    currentPage * 10
-  );
 
   return (
     <div className="disputesPage">
@@ -131,22 +123,22 @@ const Disputes = () => {
         </CInputGroup>
         <CDropdown>
           <CDropdownToggle className="dropdown">
-            Status: {statusFilter || "All"}
+            Status: {getStatusDisplay(statusFilter) || "All"}
           </CDropdownToggle>
           <CDropdownMenu>
             <CDropdownItem onClick={() => setStatusFilter("")}>
               All
             </CDropdownItem>
-            <CDropdownItem onClick={() => setStatusFilter("Open")}>
-              Open
+            <CDropdownItem onClick={() => setStatusFilter("unsolved")}>
+              Unsolved
             </CDropdownItem>
-            <CDropdownItem onClick={() => setStatusFilter("Under Review")}>
-              Under Review
-            </CDropdownItem>
-            <CDropdownItem onClick={() => setStatusFilter("Resolved")}>
+            <CDropdownItem onClick={() => setStatusFilter("resolved")}>
               Resolved
             </CDropdownItem>
-            <CDropdownItem onClick={() => setStatusFilter("Closed")}>
+            <CDropdownItem onClick={() => setStatusFilter("under review")}>
+              Under Review
+            </CDropdownItem>
+            <CDropdownItem onClick={() => setStatusFilter("closed")}>
               Closed
             </CDropdownItem>
           </CDropdownMenu>
@@ -161,8 +153,8 @@ const Disputes = () => {
             <CTableHeaderCell>Driver</CTableHeaderCell>
             <CTableHeaderCell>Issue</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
-            <CTableHeaderCell>Amount</CTableHeaderCell>
             <CTableHeaderCell>Date</CTableHeaderCell>
+            <CTableHeaderCell>Actions</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
@@ -172,16 +164,33 @@ const Disputes = () => {
                 <CSpinner size="sm" />
               </CTableDataCell>
             </CTableRow>
-          ) : paginatedDisputes.length > 0 ? (
-            paginatedDisputes.map((dispute) => (
-              <CTableRow key={dispute.id}>
-                <CTableDataCell>{dispute.disputeId}</CTableDataCell>
-                <CTableDataCell>{dispute.user}</CTableDataCell>
-                <CTableDataCell>{dispute.driver}</CTableDataCell>
-                <CTableDataCell>{dispute.issue}</CTableDataCell>
+          ) : disputes.length > 0 ? (
+            disputes.map((dispute) => (
+              <CTableRow key={dispute._id}>
+                <CTableDataCell>{dispute._id}</CTableDataCell>
+                <CTableDataCell>{dispute.userId?.fullName || "N/A"}</CTableDataCell>
+                <CTableDataCell>{dispute.driverId?.fullName || "N/A"}</CTableDataCell>
+                <CTableDataCell>{dispute.reason}</CTableDataCell>
                 <CTableDataCell>{getStatusBadge(dispute.status)}</CTableDataCell>
-                <CTableDataCell>${dispute.amount.toFixed(2)}</CTableDataCell>
-                <CTableDataCell>{dispute.date}</CTableDataCell>
+                <CTableDataCell>{new Date(dispute.createdAt).toLocaleDateString()}</CTableDataCell>
+                <CTableDataCell>
+                  <div className="d-flex gap-2">
+                    <CButton
+                      className="cta medium"
+                      onClick={() => navigate(`/disputes/${dispute._id}`)}
+                    >
+                      View Details
+                    </CButton>
+                    <CButton
+                      size="sm"
+                      className="cta low"
+                      onClick={() => navigate(`/disputes/chat/${dispute.driverId?._id}`)}
+                    >
+                      <CIcon icon={cilChatBubble} />
+                      Chat
+                    </CButton>
+                  </div>
+                </CTableDataCell>
               </CTableRow>
             ))
           ) : (
@@ -194,26 +203,26 @@ const Disputes = () => {
         </CTableBody>
       </CTable>
 
-      {totalPages > 1 && (
+      {pagination.pages > 1 && (
         <CPagination align="center" className="mt-3">
           <CPaginationItem
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage(currentPage - 1)}
+            onClick={() => fetchDisputes(currentPage - 1, searchTerm, statusFilter)}
           >
             Previous
           </CPaginationItem>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((page) => (
             <CPaginationItem
               key={page}
               active={page === currentPage}
-              onClick={() => setCurrentPage(page)}
+              onClick={() => fetchDisputes(page, searchTerm, statusFilter)}
             >
               {page}
             </CPaginationItem>
           ))}
           <CPaginationItem
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === pagination.pages}
+            onClick={() => fetchDisputes(currentPage + 1, searchTerm, statusFilter)}
           >
             Next
           </CPaginationItem>

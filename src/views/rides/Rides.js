@@ -72,11 +72,11 @@ const Rides = () => {
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case "Completed":
+      case "completed":
         return <CBadge className="medium">Completed</CBadge>;
-      case "In Progress":
-        return <CBadge className="low">In Progress</CBadge>;
-      case "Cancelled":
+      case "dispute":
+        return <CBadge className="high">Dispute</CBadge>;
+      case "cancelled":
         return <CBadge className="high">Cancelled</CBadge>;
       default:
         return <CBadge>{status}</CBadge>;
@@ -110,13 +110,13 @@ const Rides = () => {
             <CDropdownItem onClick={() => setStatusFilter("")}>
               All
             </CDropdownItem>
-            <CDropdownItem onClick={() => setStatusFilter("Completed")}>
+            <CDropdownItem onClick={() => setStatusFilter("completed")}>
               Completed
             </CDropdownItem>
-            <CDropdownItem onClick={() => setStatusFilter("In Progress")}>
-              In Progress
+            <CDropdownItem onClick={() => setStatusFilter("dispute")}>
+              Dispute
             </CDropdownItem>
-            <CDropdownItem onClick={() => setStatusFilter("Cancelled")}>
+            <CDropdownItem onClick={() => setStatusFilter("cancelled")}>
               Cancelled
             </CDropdownItem>
           </CDropdownMenu>

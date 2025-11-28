@@ -86,3 +86,13 @@ export const getTimeLogs = async (query = "") => {
   const queryString = query ? `?q=${encodeURIComponent(query)}` : "";
   return await apiHelper("GET", `admin/get-time-logs${queryString}`);
 };
+
+export const getDisputes = async (params = {}) => {
+  const queryParams = new URLSearchParams();
+  if (params.page) queryParams.append('page', params.page);
+  if (params.limit) queryParams.append('limit', params.limit);
+  if (params.search) queryParams.append('search', params.search);
+  if (params.status) queryParams.append('status', params.status);
+  const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";
+  return await apiHelper("GET", `admin/get-disputes${queryString}`);
+};

@@ -62,7 +62,7 @@ const Login = () => {
       console.log("API Response:", response);
       console.log("API Error:", error);
 
-      if (response?.data?.status === 1 && response?.data?.data?.adminAuthToken) {
+      if (response?.data?.status === 1 && response?.data?.data?.userAuthToken) {
         const userData = {
           userId: response.data.data._id,
           email: response.data.data.email,
@@ -80,7 +80,7 @@ const Login = () => {
         dispatch(
           setLogin({
             user: userData,
-            token: response.data.data.adminAuthToken,
+            token: response.data.data.userAuthToken,
           })
         );
 

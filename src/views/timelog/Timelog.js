@@ -45,7 +45,7 @@ const Timelog = () => {
       );
 
       if (response?.data?.status === 1) {
-        const timelogsData = response.data.data || [];
+        const timelogsData = response.data.data?.logs || [];
         setTimelogs(timelogsData);
       } else {
         toast.error(response?.data?.message || error || "Failed to fetch timelogs.");
@@ -105,31 +105,33 @@ const Timelog = () => {
       <CTable hover responsive className="customTables">
         <CTableHead>
           <CTableRow>
-            <CTableHeaderCell>ID</CTableHeaderCell>
-            <CTableHeaderCell>User</CTableHeaderCell>
-            <CTableHeaderCell>Action</CTableHeaderCell>
-            <CTableHeaderCell>Timestamp</CTableHeaderCell>
+            <CTableHeaderCell>Driver ID</CTableHeaderCell>
+            <CTableHeaderCell>Driver Name</CTableHeaderCell>
+            <CTableHeaderCell>Vendor</CTableHeaderCell>
+            <CTableHeaderCell>Total Ride Time</CTableHeaderCell>
+            <CTableHeaderCell>Last Ride Date</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
           {tableLoading ? (
             <CTableRow>
-              <CTableDataCell colSpan={4} className="text-center">
+              <CTableDataCell colSpan={5} className="text-center">
                 <CSpinner size="sm" />
               </CTableDataCell>
             </CTableRow>
           ) : timelogs.length > 0 ? (
             timelogs.map((log, index) => (
-              <CTableRow key={index}>
-                <CTableDataCell>{log.id || index + 1}</CTableDataCell>
-                <CTableDataCell>{log.user || "N/A"}</CTableDataCell>
-                <CTableDataCell>{log.action || "N/A"}</CTableDataCell>
-                <CTableDataCell>{log.timestamp || "N/A"}</CTableDataCell>
+              <CTableRow key={log.driverId || index}>
+                <CTableDataCell>{log.driverId}</CTableDataCell>
+                <CTableDataCell>{log.driverName}</CTableDataCell>
+                <CTableDataCell>{log.vendorName || log.vendorEmail}</CTableDataCell>
+                <CTableDataCell>{log.totalRideTime}</CTableDataCell>
+                <CTableDataCell>{log.lastRideDate}</CTableDataCell>
               </CTableRow>
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan={4} className="text-center">
+              <CTableDataCell colSpan={5} className="text-center">
                 No timelogs found
               </CTableDataCell>
             </CTableRow>

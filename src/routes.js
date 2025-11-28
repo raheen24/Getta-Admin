@@ -16,6 +16,8 @@ const RideDetails = React.lazy(() => import('./views/rides/RideDetails'))
 const Reviews = React.lazy(() => import('./views/reviews/Reviews'))
 const ReviewDetails = React.lazy(() => import('./views/reviews/ReviewDetails'))
 const Disputes = React.lazy(() => import('./views/disputes/Disputes'))
+const DisputeDetails = React.lazy(() => import('./views/disputes/DisputeDetails'))
+const DisputeChat = React.lazy(() => import('./views/disputes/DisputeChat'))
 const Timelog = React.lazy(() => import('./views/timelog/Timelog'))
 const Settings = React.lazy(() => import('./views/settings/Settings'))
 const ChangePassword = React.lazy(() => import('./views/change-password/ChangePassword'))
@@ -36,9 +38,11 @@ const routes = [
   { path: '/reviews', name: 'Reviews', element: Reviews },
   { path: '/reviews/:id', name: 'Review Details', element: ReviewDetails },
   { path: '/disputes', name: 'Disputes', element: Disputes },
+  { path: '/disputes/:id', name: 'Dispute Details', element: DisputeDetails },
+  { path: '/disputes/chat/:driverId', name: 'Dispute Chat', element: DisputeChat },
   { path: '/timelog', name: 'Timelog', element: Timelog },
   { path: '/settings', name: 'Settings', element: Settings },
-  {path : '/change-password', name: 'Change Password', element: ChangePassword},  
+{path : '/change-password', name: 'Change Password', element: ChangePassword},
 
 ]
 

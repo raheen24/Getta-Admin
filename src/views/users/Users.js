@@ -284,7 +284,7 @@ const Users = () => {
                 </CTableDataCell>
                 <CTableDataCell>{getStatusBadge(user.isActive)}</CTableDataCell>
                 <CTableDataCell>
-                  <CButton
+                  {/* <CButton
                     size="sm"
                     className="medium me-2"
                     onClick={(e) => {
@@ -293,7 +293,7 @@ const Users = () => {
                     }}
                   >
                     <CIcon icon={cilPencil} />
-                  </CButton>
+                  </CButton> */}
                   <CButton
                     className="high"
                     size="sm"

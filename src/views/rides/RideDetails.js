@@ -43,20 +43,16 @@ const RideDetails = () => {
   };
 
   const getStatusBadge = (status) => {
-    const customClasses = {
-      accepted: "medium",
-      pending: "pending",
-      cancelled: "high",
-    };
-
-    const defaultColors = {
-      completed: "success",
-      ongoing: "info",
-    };
-
-    const appliedClass =
-      customClasses[status] || defaultColors[status] || "secondary";
-    return <CBadge className={appliedClass}>{status}</CBadge>;
+    switch (status) {
+      case "completed":
+        return <CBadge className="medium">Completed</CBadge>;
+      case "dispute":
+        return <CBadge className="high">Dispute</CBadge>;
+      case "cancelled":
+        return <CBadge className="high">Cancelled</CBadge>;
+      default:
+        return <CBadge>{status}</CBadge>;
+    }
   };
 
   if (loading) {

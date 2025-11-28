@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   CCard,
   CCardBody,
@@ -23,6 +23,7 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 const ReviewDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [review, setReview] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -121,17 +122,17 @@ const ReviewDetails = () => {
                 </CCol>
                 <CCol md={6}>
                   <p>
-                    <strong>Ride ID:</strong> {review.rideId._id}
+                    <strong>Ride ID:</strong> {review.rideId ? review.rideId._id : 'N/A'}
                   </p>
                   <p>
-                    <strong>Fare:</strong> ${review.rideId.fare}
+                    <strong>Fare:</strong> ${review.rideId ? review.rideId.fare : 'N/A'}
                   </p>
                   <p>
-                    <strong>Distance:</strong> {review.rideId.distance} miles
+                    <strong>Distance:</strong> {review.rideId ? `${review.rideId.distance} miles` : 'N/A'}
                   </p>
                   <p>
                     <strong>Status:</strong>{" "}
-                    <CBadge className="medium">{review.rideId.status}</CBadge>
+                    <CBadge className="medium">{review.rideId ? review.rideId.status : 'N/A'}</CBadge>
                   </p>
                 </CCol>
               </CRow>
@@ -154,7 +155,7 @@ const ReviewDetails = () => {
                 <div className="d-flex align-items-center gap-2">
                   <img
                     src={
-                      review.userId.image || "https://via.placeholder.com/50"
+                      review.userId?.image || "https://via.placeholder.com/50"
                     }
                     alt="User Avatar"
                     style={{
@@ -167,36 +168,36 @@ const ReviewDetails = () => {
                   />
                 </div>
                 <div>
-                  <strong className="name">{review.userId.fullName}</strong>
+                  <strong className="name">{review.userId?.fullName || 'N/A'}</strong>
                 </div>
               </div>
               <p>
                 <CIcon icon={cilUser} className="me-2 text-muted" />
-                {review.userId.email}
+                {review.userId?.email || 'N/A'}
               </p>
               <p>
                 <CIcon icon={cilUser} className="me-2 text-muted" />{" "}
-                {review.userId.phoneNumber}
+                {review.userId?.phoneNumber || 'N/A'}
               </p>
               <p>
                 <CIcon icon={cilCalendar} className="me-2 text-muted" /> Joined:
-                {new Date(review.userId.createdAt).toLocaleDateString()}
+                {review.userId?.createdAt ? new Date(review.userId.createdAt).toLocaleDateString() : 'N/A'}
               </p>
               <p>
-                <strong>Bio:</strong> {review.userId.bio || "N/A"}
+                <strong>Bio:</strong> {review.userId?.bio || "N/A"}
               </p>
               <p>
-                <strong>Total Rides:</strong> {review.userId.totalRides || 0}
+                <strong>Total Rides:</strong> {review.userId?.totalRides || 0}
               </p>
               <p>
-                <strong>Earning:</strong> ${review.userId.earning || 0}
+                <strong>Earning:</strong> ${review.userId?.earning || 0}
               </p>
               <p>
-                <strong>Points:</strong> {review.userId.points || 0}
+                <strong>Points:</strong> {review.userId?.points || 0}
               </p>
               <p>
                 <strong>SSN:</strong>{" "}
-                {review.userId.ssn
+                {review.userId?.ssn
                   ? `***-**-${review.userId.ssn.toString().slice(-4)}`
                   : "N/A"}
               </p>
@@ -212,19 +213,19 @@ const ReviewDetails = () => {
             <CCardBody>
               <p>
                 <strong>Active:</strong>{" "}
-                {review.driverId.isActive ? "Yes" : "No"}
+                {review.driverId?.isActive ? "Yes" : "No"}
               </p>
               <p>
                 <strong>Verified:</strong>{" "}
-                {review.driverId.isVerified ? "Yes" : "No"}
+                {review.driverId?.isVerified ? "Yes" : "No"}
               </p>
               <p>
                 <strong>Blocked:</strong>{" "}
-                {review.driverId.isBlocked ? "Yes" : "No"}
+                {review.driverId?.isBlocked ? "Yes" : "No"}
               </p>
               <p>
                 <strong>Notification:</strong>{" "}
-                {review.driverId.isNotification ? "Yes" : "No"}
+                {review.driverId?.isNotification ? "Yes" : "No"}
               </p>
             </CCardBody>
           </CCard>
@@ -254,36 +255,36 @@ const ReviewDetails = () => {
                   />
                 </div>
                 <div>
-                  <strong className="name">{review.driverId.fullName}</strong>
+                  <strong className="name">{review.driverId?.fullName || 'N/A'}</strong>
                 </div>
               </div>
               <p>
                 <CIcon icon={cilUser} className="me-2 text-muted" />
-                {review.driverId.email}
+                {review.driverId?.email || 'N/A'}
               </p>
               <p>
                 <CIcon icon={cilUser} className="me-2 text-muted" />{" "}
-                {review.driverId.phoneNumber}
+                {review.driverId?.phoneNumber || 'N/A'}
               </p>
               <p>
                 <CIcon icon={cilCalendar} className="me-2 text-muted" /> Joined:
-                {new Date(review.driverId.createdAt).toLocaleDateString()}
+                {review.driverId?.createdAt ? new Date(review.driverId.createdAt).toLocaleDateString() : 'N/A'}
               </p>
               <p>
-                <strong>Bio:</strong> {review.driverId.bio || "N/A"}
+                <strong>Bio:</strong> {review.driverId?.bio || "N/A"}
               </p>
               <p>
-                <strong>Total Rides:</strong> {review.driverId.totalRides || 0}
+                <strong>Total Rides:</strong> {review.driverId?.totalRides || 0}
               </p>
               <p>
-                <strong>Earning:</strong> ${review.driverId.earning || 0}
+                <strong>Earning:</strong> ${review.driverId?.earning || 0}
               </p>
               <p>
-                <strong>License:</strong> {review.driverId.drivingLicense}
+                <strong>License:</strong> {review.driverId?.drivingLicense || 'N/A'}
               </p>
               <p>
                 <strong>Driver Vendor:</strong>{" "}
-                {review.driverId.driverVendor || "N/A"}
+                {review.driverId?.driverVendor || "N/A"}
               </p>
             </CCardBody>
           </CCard>
